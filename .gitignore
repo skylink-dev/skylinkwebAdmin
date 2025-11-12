@@ -1,39 +1,135 @@
-# Python
+# =====================================
+# 🐍 PYTHON / DJANGO
+# =====================================
 *.pyc
-__pycache__/
 *.pyo
 *.pyd
+__pycache__/
 *.py[cod]
 *.env
 *.venv
-*.env.*
+.env.*
+.venv/
+env/
+venv/
+Pipfile
+Pipfile.lock
+poetry.lock
 
 # Django stuff:
 *.log
 *.pot
 *.py[cod]
 db.sqlite3
+*.sqlite3
 media/
+media_root/
+static/
 staticfiles/
 static_root/
-*.sqlite3
+collectstatic/
+local_settings.py
+celerybeat-schedule
+celerybeat.pid
 
-# VS Code / IDEs
+# Django migration caches
+*/migrations/__pycache__/
+*/migrations/*.pyc
+*/migrations/*.pyo
+
+# =====================================
+# 🧩 FRONTEND (React / Next.js / Node)
+# =====================================
+node_modules/
+dist/
+build/
+.next/
+out/
+.npm/
+.npmrc
+yarn-error.log
+package-lock.json
+pnpm-lock.yaml
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# =====================================
+# ⚙️ IDEs & EDITORS
+# =====================================
 .vscode/
 .idea/
 *.sublime-project
 *.sublime-workspace
+*.code-workspace
 
-# macOS
-.DS_Store
-
-# Node (if using npm / frontend)
-node_modules/
-dist/
-.env.local
-.next/
-out/
-
-# Coverage reports
+# =====================================
+# 🧪 TESTS / COVERAGE
+# =====================================
 htmlcov/
 .coverage
+.tox/
+.nox/
+coverage.xml
+.pytest_cache/
+nosetests.xml
+test-results.xml
+
+# =====================================
+# 🧰 SYSTEM / OS
+# =====================================
+.DS_Store
+Thumbs.db
+desktop.ini
+ehthumbs.db
+
+# =====================================
+# 🧾 DEPLOYMENT / CONTAINERS
+# =====================================
+# Git / CI / Docker / Venv
+.git/
+.gitignore
+docker-compose.override.yml
+Dockerfile.*
+__pycache__/
+instance/
+*.pem
+*.crt
+*.key
+
+# =====================================
+# 🧩 ADDITIONAL (OPTIONAL)
+# =====================================
+# Backup / Temporary
+*.bak
+*.tmp
+*.swp
+*.orig
+
+# Logs
+*.log
+logs/
+*.out
+
+# Env & secrets
+secrets.json
+.env.backup
+.env.sample
+
+# Local database backups
+*.db
+*.db-journal
+dump.rdb
+
+# Lock / PID files
+*.pid
+*.seed
+*.lock
+
+# =====================================
+# 🧩 Optional: Git vendor folder
+# =====================================
+.vend/
+vendor/
+vendors/
