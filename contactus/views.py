@@ -1,18 +1,15 @@
 from rest_framework import generics
-from rest_framework.response import Response
-from rest_framework import status
-from .models import ContactUs
+from .models import ContactUs, ZohoLeadLog
 from .serializers import ContactUsSerializer
-import requests  # for sending data to Zoho
+import requests
 
 class ContactUsListCreateAPI(generics.ListCreateAPIView):
     queryset = ContactUs.objects.all().order_by('-created_at')
     serializer_class = ContactUsSerializer
 
     def perform_create(self, serializer):
-        contact = serializer.save()  # Save to local DB first
+        contact = serializer.save()
 
-        # --- Send data to Zoho CRM Web-to-Lead ---
         zoho_url = "https://crm.zoho.in/crm/WebToLeadForm"
         payload = {
             "xnQsjsdp": "4baf747f51b50041d5f3fcb34d8658593970bb7f969c23e4e378318ac6e0813d",
@@ -27,11 +24,21 @@ class ContactUsListCreateAPI(generics.ListCreateAPIView):
 
         try:
             response = requests.post(zoho_url, data=payload)
-            response.raise_for_status()  # raise error if failed
+            response.raise_for_status()
+            ZohoLeadLog.objects.create(
+                contact=contact,
+                status="SUCCESS",
+                response_code=response.status_code,
+                message="Lead pushed to Zoho successfully."
+            )
         except requests.exceptions.RequestException as e:
-            print("⚠️ Zoho CRM POST failed:", e)
+            ZohoLeadLog.objects.create(
+                contact=contact,
+                status="ERROR",
+                message=str(e)
+            )
 
-        return contact  # optional, already handled by DRF
+        return contact
 
 
 class ContactUsDetailAPI(generics.RetrieveUpdateDestroyAPIView):
