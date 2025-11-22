@@ -6,31 +6,37 @@
 *.pyd
 __pycache__/
 *.py[cod]
-*.env
-*.venv
-.env.*
-.venv/
+
+# Virtual environments
 env/
 venv/
-Pipfile
-Pipfile.lock
-poetry.lock
+.venv/
+*.venv/
 
-# Django stuff:
+# Environment / secrets
+.env
+*.env
+.env.*
+secrets.json
+.env.backup
+.env.sample
+
+# Django files
 *.log
 *.pot
-*.py[cod]
 db.sqlite3
 *.sqlite3
+local_settings.py
+celerybeat-schedule
+celerybeat.pid
+
+# Media & Static (generated)
 media/
 media_root/
 static/
 staticfiles/
 static_root/
 collectstatic/
-local_settings.py
-celerybeat-schedule
-celerybeat.pid
 
 # Django migration caches
 */migrations/__pycache__/
@@ -45,11 +51,15 @@ dist/
 build/
 .next/
 out/
+
+# NPM / Yarn / PNPM
 .npm/
 .npmrc
 yarn-error.log
 package-lock.json
 pnpm-lock.yaml
+
+# Local frontend env files
 .env.local
 .env.development.local
 .env.test.local
@@ -69,6 +79,7 @@ pnpm-lock.yaml
 # =====================================
 htmlcov/
 .coverage
+.coverage.*
 .tox/
 .nox/
 coverage.xml
@@ -87,37 +98,24 @@ ehthumbs.db
 # =====================================
 # 🧾 DEPLOYMENT / CONTAINERS
 # =====================================
-# Git / CI / Docker / Venv
-.git/
-.gitignore
 docker-compose.override.yml
 Dockerfile.*
-__pycache__/
 instance/
 *.pem
 *.crt
 *.key
 
 # =====================================
-# 🧩 ADDITIONAL (OPTIONAL)
+# 📦 BACKUPS / TEMP FILES
 # =====================================
-# Backup / Temporary
 *.bak
 *.tmp
 *.swp
 *.orig
-
-# Logs
-*.log
 logs/
 *.out
 
-# Env & secrets
-secrets.json
-.env.backup
-.env.sample
-
-# Local database backups
+# Database backups
 *.db
 *.db-journal
 dump.rdb
@@ -128,7 +126,7 @@ dump.rdb
 *.lock
 
 # =====================================
-# 🧩 Optional: Git vendor folder
+# 🧩 Vendor folder (optional)
 # =====================================
 .vend/
 vendor/

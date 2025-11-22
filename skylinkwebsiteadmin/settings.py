@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'fisability',
     "subscription",
     'import_export',
+    'call3cx',
 ]
 
 MIDDLEWARE = [
@@ -157,3 +158,18 @@ JAZZMIN_SETTINGS = {
         }],
     },
 }
+
+
+
+# Use env vars for secrets and 3cx host
+import os
+from pathlib import Path
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Example; place in .env (see below)
+THREECX_MAKECALL_URL = os.getenv("THREECX_MAKECALL_URL", "")
+THREECX_ORIGINATOR = os.getenv("THREECX_ORIGINATOR", "100")
+CALL_API_SECRET = os.getenv("CALL_API_SECRET", "sdafsf")
+
+
+GOOGLE_API_KEY = "AIzaSyBfl9FeQrq_J6IdVBRMzBJWm6enyJvjGQ4"

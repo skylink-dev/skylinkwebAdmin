@@ -1,7 +1,7 @@
 from rest_framework import serializers
-from .models import Fisability
+from .models import CoverageArea
 
-class FisabilitySerializer(serializers.ModelSerializer):
+class CoverageAreaSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Fisability
+        model = CoverageArea
         fields = '__all__'

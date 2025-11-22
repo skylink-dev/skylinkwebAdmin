@@ -1,18 +1,11 @@
 from django.db import models
 
-class Fisability(models.Model):
-    circlename = models.CharField(max_length=100, blank=True, null=True, default='')
-    regionname = models.CharField(max_length=100, blank=True, null=True, default='')
-    divisionname = models.CharField(max_length=100, blank=True, null=True, default='')
-    officename = models.CharField(max_length=100, blank=True, null=True, default='')
-    pincode = models.CharField(max_length=10, blank=True, null=True, default='')
-    officetype = models.CharField(max_length=50, blank=True, null=True, default='')
-    delivery = models.CharField(max_length=50, blank=True, null=True, default='')
-    district = models.CharField(max_length=100, blank=True, null=True, default='')
-    statename = models.CharField(max_length=100, blank=True, null=True, default='')
-    latitude = models.CharField(max_length=50, blank=True, null=True, default='')
-    longitude = models.CharField(max_length=50, blank=True, null=True, default='')
-    availability = models.BooleanField(default=False)  # user-updated availability
+class CoverageArea(models.Model):
+    city = models.CharField(max_length=100, default="Unknown")
+    area_name = models.CharField(max_length=100, default="Unnamed Area")
+    center_lat = models.FloatField(default=0.0)
+    center_lng = models.FloatField(default=0.0)
+    radius_km = models.FloatField(default=1.0)  # You can increase the default radius
 
     def __str__(self):
-        return f"{self.officename or ''} - {self.pincode or ''}"
+        return f"{self.city} - {self.area_name}"
