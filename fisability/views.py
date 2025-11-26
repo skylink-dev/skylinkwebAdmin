@@ -9,7 +9,7 @@ from django.shortcuts import render, get_object_or_404
 from django.conf import settings
 import requests
 from urllib.parse import quote
-
+from django.utils.decorators import method_decorator
 
 # ----------------------------------------------------------
 # Utility: Distance Calculation (Haversine Formula)
@@ -120,12 +120,13 @@ def geocode_address(address):
 
 # ----------------------------------------------------------
 # CRUD APIs for CoverageArea (DRF)
-# ----------------------------------------------------------
+# ----------------------------------------------------------# Exempt CSRF for the whole class
+@method_decorator(csrf_exempt, name='dispatch')
 class CoverageAreaListCreateView(generics.ListCreateAPIView):
     queryset = CoverageArea.objects.all()
     serializer_class = CoverageAreaSerializer
 
-
+@method_decorator(csrf_exempt, name='dispatch')
 class CoverageAreaDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = CoverageArea.objects.all()
     serializer_class = CoverageAreaSerializer
