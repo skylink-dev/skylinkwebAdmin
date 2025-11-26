@@ -3,7 +3,9 @@ from .models import ContactUs, ZohoLeadLog
 from .serializers import ContactUsSerializer
 from django.views.decorators.csrf import csrf_exempt
 import requests
-@csrf_exempt
+from django.utils.decorators import method_decorator
+
+@method_decorator(csrf_exempt, name='dispatch')
 class ContactUsListCreateAPI(generics.ListCreateAPIView):
     queryset = ContactUs.objects.all().order_by('-created_at')
     serializer_class = ContactUsSerializer
