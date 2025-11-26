@@ -43,7 +43,7 @@ class ContactUsListCreateAPI(generics.ListCreateAPIView):
 
         return contact
 
-
+@method_decorator(csrf_exempt, name='dispatch')
 class ContactUsDetailAPI(generics.RetrieveUpdateDestroyAPIView):
     queryset = ContactUs.objects.all()
     serializer_class = ContactUsSerializer
