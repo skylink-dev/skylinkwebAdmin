@@ -8,6 +8,7 @@ from .serializers import CoverageAreaSerializer
 from django.shortcuts import render, get_object_or_404
 from django.conf import settings
 import requests
+from urllib.parse import quote
 
 
 # ----------------------------------------------------------
@@ -17,14 +18,13 @@ def distance_km(lat1, lng1, lat2, lng2):
     R = 6371.0  # Earth radius in km
 
     dlat = radians(lat2 - lat1)
-    dlng = radians(lat2 - lng1)
+    dlng = radians(lng2 - lng1)
 
     a = (sin(dlat / 2) ** 2 +
          cos(radians(lat1)) * cos(radians(lat2)) *
          sin(dlng / 2) ** 2)
 
     c = 2 * atan2(sqrt(a), sqrt(1 - a))
-
     return R * c
 
 
@@ -38,27 +38,31 @@ def check_availability(request):
 
     try:
         data = json.loads(request.body)
+        lat = data.get("lat")
+        lng = data.get("lng")
         address = data.get("address")
-        if not address:
-            return JsonResponse({"error": "Address required"}, status=400)
     except:
         return JsonResponse({"error": "Invalid payload"}, status=400)
 
-    # 1️⃣ Convert address → lat/lng
-    geo = geocode_address(address)
-    if not geo:
-        return JsonResponse({"error": "Unable to find location for this address"}, status=400)
+    # If lat/lng provided, skip geocoding
+    if lat and lng:
+        pass
+    elif address:
+        geo = geocode_address(address)
+        if not geo:
+            return JsonResponse({"error": "Unable to find location for this address"}, status=400)
+        lat, lng = geo
+    else:
+        return JsonResponse({"error": "Address or lat/lng required"}, status=400)
 
-    lat, lng = geo
-
-    # 2️⃣ Check coverage
+    # Check coverage
     for area in CoverageArea.objects.all():
-        dist = distance_km(lat, lng, area.center_lat, area.center_lng)
+        dist = distance_km(float(lat), float(lng), area.center_lat, area.center_lng)
 
         if dist <= area.radius_km:
             return JsonResponse({
                 "available": True,
-                "input_address": address,
+                "input_address": address if address else None,
                 "lat": lat,
                 "lng": lng,
                 "city": area.city,
@@ -69,10 +73,49 @@ def check_availability(request):
 
     return JsonResponse({
         "available": False,
-        "input_address": address,
+        "input_address": address if address else None,
         "lat": lat,
         "lng": lng
     })
+
+
+# ----------------------------------------------------------
+# Admin Map Views
+# ----------------------------------------------------------
+def admin_map_view(request):
+    area_id = request.GET.get("id")
+    area = get_object_or_404(CoverageArea, id=area_id)
+
+    return render(request, "admin/map_view.html", {
+        "area": area,
+        "google_api_key": settings.GOOGLE_API_KEY,
+    })
+
+
+def admin_all_map_view(request):
+    areas = CoverageArea.objects.all()
+
+    return render(request, "admin/map_all.html", {
+        "areas": areas,
+        "google_api_key": settings.GOOGLE_API_KEY,
+    })
+
+
+# ----------------------------------------------------------
+# Geocoding Utility
+# ----------------------------------------------------------
+def geocode_address(address):
+    encoded = quote(address)
+    url = f"https://maps.googleapis.com/maps/api/geocode/json?address={encoded}&key={settings.GOOGLE_API_KEY}"
+
+    response = requests.get(url).json()
+
+    if response.get("status") != "OK":
+        print("Geocode Error:", response)  # Debug logging
+        return None
+
+    location = response["results"][0]["geometry"]["location"]
+    return location["lat"], location["lng"]
 
 
 # ----------------------------------------------------------
@@ -86,35 +129,3 @@ class CoverageAreaListCreateView(generics.ListCreateAPIView):
 class CoverageAreaDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = CoverageArea.objects.all()
     serializer_class = CoverageAreaSerializer
-
-
-# ----------------------------------------------------------
-# Admin View: Map Display
-def admin_map_view(request):
-    area_id = request.GET.get("id")
-    area = get_object_or_404(CoverageArea, id=area_id)
-
-    return render(request, "admin/map_view.html", {
-        "area": area,
-        "google_api_key": settings.GOOGLE_API_KEY,
-    })
-
-
-
-def admin_all_map_view(request):
-    areas = CoverageArea.objects.all()
-
-    return render(request, "admin/map_all.html", {
-        "areas": areas,
-        "google_api_key": settings.GOOGLE_API_KEY,
-    })
-
-def geocode_address(address):
-    url = f"https://maps.googleapis.com/maps/api/geocode/json?address={address}&key={settings.GOOGLE_API_KEY}"
-    response = requests.get(url).json()
-
-    if response["status"] != "OK":
-        return None
-
-    location = response["results"][0]["geometry"]["location"]
-    return location["lat"], location["lng"]
